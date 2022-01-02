@@ -16,3 +16,18 @@ module.exports.validateRegisterInput = (itsc, password, confirmedPassword) => {
     }
 
 };
+
+module.exports.validateLoginInput = (itsc, password) => {
+    const errors = {};
+    if (itsc.trim() === '') {
+        errors.itsc = 'ITSC must not be empty!';
+    }
+    if (password === '') {
+        errors.password = 'Password must not be empty!';
+    }
+
+    return {
+        errors, 
+        valid: Object.keys(errors).length < 1
+    }
+}

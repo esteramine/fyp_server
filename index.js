@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 const { MONGO_URL } = require('./config');
 const User = require('./models/User');
-const { validateRegisterInput } = require('./utils/validators');
+const { validateRegisterInput, validateLoginInput } = require('./utils/validators');
 
 const PORT = process.env.PORT || 4000;
 
@@ -22,10 +22,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-    // const { itsc, password, confirmedPassword } = req.body;
-    const itsc = req.body.itsc;
-    const password = req.body.password;
-    const confirmedPassword = req.body.confirmedPassword;
+    const { itsc, password, confirmedPassword } = req.body;
     const { errors, valid } = validateRegisterInput(itsc, password, confirmedPassword);
     if (!valid) {
         res.send(errors);
@@ -49,6 +46,35 @@ app.post('/register', (req, res) => {
             }
         });    
     }
+});
+
+app.post('/login', (req, res) => {
+    const { itsc, password } = req.body;
+    const { errors, valid } = validateLoginInput(itsc, password);
+    if (!valid) {
+        res.send(errors);
+    }
+    else {
+        User.findOne({ itsc }, (err, user) => {
+            if (!user) {
+                errors.itsc = 'User does not exist!';
+                res.send(errors);
+            }
+            else {
+                bcrypt.compare(password, user.password, (err, result) => {
+                    if (!result) {
+                        errors.password = 'Password incorrect!';
+                        res.send(errors);
+                    }
+                    else {
+                        res.send('Successfully Login!');
+                    }
+                });
+            }
+
+        });
+    }
+
 });
 
 app.listen(PORT, () => {
