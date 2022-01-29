@@ -17,7 +17,7 @@ const userSchema = new Schema({
     createdAt: {
         type: String,
         required: true
-    }
+    },
     // studentId: {
     //     type: String,
     //     required: true,
@@ -26,7 +26,7 @@ const userSchema = new Schema({
     // school: {
     //     type: String,
     //     required: true,
-    // }
+    // },
 
 });
 
