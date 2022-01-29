@@ -1,7 +1,7 @@
-module.exports.validateRegisterInput = (itsc, password, confirmedPassword) => {
+module.exports.validateRegisterInput = (username, password, confirmedPassword) => {
     const errors = {};
-    if (itsc.trim() == '') {
-        errors.itsc = 'ITSC should not be empty!';
+    if (username.trim() == '') {
+        errors.username = 'Username should not be empty!';
     }
     if (password == '') {
         errors.password = 'Password should not be empty!';
@@ -17,10 +17,10 @@ module.exports.validateRegisterInput = (itsc, password, confirmedPassword) => {
 
 };
 
-module.exports.validateLoginInput = (itsc, password) => {
+module.exports.validateLoginInput = (username, password) => {
     const errors = {};
-    if (itsc.trim() === '') {
-        errors.itsc = 'ITSC must not be empty!';
+    if (username.trim() === '') {
+        errors.username = 'Username must not be empty!';
     }
     if (password === '') {
         errors.password = 'Password must not be empty!';
