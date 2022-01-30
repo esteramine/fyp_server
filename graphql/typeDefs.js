@@ -22,6 +22,10 @@ module.exports = gql`
         username: String!
         password: String!
     }
+    input PostInput {
+        image: String!
+        foodName: String!
+    }
     type Query {
         getPosts: [Post]
         getPost(postId: ID!): Post
@@ -29,5 +33,7 @@ module.exports = gql`
     type Mutation {
         register(registerInput: RegisterInput): User!
         login(loginInput: LoginInput): User!
+        createPost(postInput: PostInput): Post!
+        deletePost(postId: ID!): String!
     }
 `;
