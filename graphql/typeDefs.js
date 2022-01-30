@@ -3,6 +3,7 @@ const gql = require('graphql-tag');
 module.exports = gql`
     type Post {
         id: ID!
+        image: String!
         foodName: String!
         username: String!
         createdAt: String!
@@ -10,6 +11,15 @@ module.exports = gql`
         likes: [Like]!
         commentCount: Int!
         likeCount: Int!
+
+        completion: String!
+        ateTime: String!
+        price: String!
+        restaurantName: String!
+        location: String!
+        rating: String!
+        review: String!
+        tags: [String]!
     }
     type User {
         id: ID!
@@ -40,6 +50,15 @@ module.exports = gql`
     input PostInput {
         image: String!
         foodName: String!
+        # below are not required
+        completion: String!
+        ateTime: String!
+        price: String!
+        restaurantName: String!
+        location: String!
+        rating: String!
+        review: String!
+        tags: [String]!
     }
     type Query {
         getPosts: [Post]

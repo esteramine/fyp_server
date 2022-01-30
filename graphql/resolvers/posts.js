@@ -9,7 +9,7 @@ module.exports = {
             try {
                 const posts = await Post.find().sort({ createdAt: -1 });
                 return posts;
-                
+
             } catch (error) {
                 throw new Error(err);
             }
@@ -29,7 +29,17 @@ module.exports = {
         }
     },
     Mutation: {
-        async createPost(_, {postInput: { image, foodName }}, context) {
+        async createPost(_, { postInput: {
+            image,
+            foodName,
+            completion,
+            ateTime,
+            price,
+            restaurantName,
+            location,
+            rating,
+            review,
+            tags } }, context) {
             const user = checkAuth(context);
 
             if (image.trim() === '') {
@@ -45,7 +55,15 @@ module.exports = {
                 foodName,
                 user: user.id,
                 username: user.username,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                completion,
+                ateTime,
+                price,
+                restaurantName,
+                location,
+                rating,
+                review,
+                tags
             });
 
             const post = await newPost.save();
@@ -57,7 +75,7 @@ module.exports = {
 
             try {
                 const post = await Post.findById(postId);
-                if(user.username == post.username) { 
+                if (user.username == post.username) {
                     // check whether the person who delete the post is the post owner
                     await post.delete();
                     return 'Post deleted successfully.';
@@ -76,7 +94,7 @@ module.exports = {
             if (post) {
                 if (post.likes.find(like => like.username === username)) {
                     // whether the user already liked the post
-                    post.likes = post.likes.filter(like => like.username !== username); 
+                    post.likes = post.likes.filter(like => like.username !== username);
                 }
                 else {
                     // the user has not liked the post, like the post
