@@ -1,4 +1,4 @@
-const { AuthenticationError } = require('apollo-server');
+const { AuthenticationError, UserInputError } = require('apollo-server');
 
 const Post = require('../../models/Post');
 const checkAuth = require('../../utils/checkAuth');
@@ -32,6 +32,14 @@ module.exports = {
         async createPost(_, {postInput: { image, foodName }}, context) {
             const user = checkAuth(context);
 
+            if (image.trim() === '') {
+                throw new Error('You must upload an image.');
+            }
+
+            if (foodName.trim() === '') {
+                throw new Error('Food name field must not be empty.');
+            }
+
             const newPost = new Post({
                 image,
                 foodName,
@@ -59,6 +67,29 @@ module.exports = {
                 }
             } catch (error) {
                 throw new Error(error);
+            }
+        },
+        async likePost(_, { postId }, context) {
+            const { username } = checkAuth(context);
+
+            const post = await Post.findById(postId);
+            if (post) {
+                if (post.likes.find(like => like.username === username)) {
+                    // whether the user already liked the post
+                    post.likes = post.likes.filter(like => like.username !== username); 
+                }
+                else {
+                    // the user has not liked the post, like the post
+                    post.likes.push({
+                        username,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+                await post.save();
+                return post;
+            }
+            else {
+                throw new UserInputError('Post not found.');
             }
         }
     }
