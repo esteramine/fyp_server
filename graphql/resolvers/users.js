@@ -6,11 +6,18 @@ const { SECRET_KEY } = require('../../config');
 const User = require('../../models/User');
 const { validateRegisterInput, validateLoginInput } = require('../../utils/validators');
 
+// const generateToken = (user) => {
+//     return jwt.sign({
+//         id: user.id,
+//         username: user.username
+//     }, SECRET_KEY, { expiresIn: '1h' });
+// }
+
 const generateToken = (user) => {
     return jwt.sign({
         id: user.id,
         username: user.username
-    }, SECRET_KEY, { expiresIn: '1h' });
+    }, SECRET_KEY,);
 }
 
 module.exports = {
