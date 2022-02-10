@@ -28,11 +28,11 @@ module.exports = {
                 throw new Error(err);
             }
         },
-        async getUserMonthPosts(_, { month }, context) {
+        async getUserMonthPosts(_, { year, month }, context) {
             const user = checkAuth(context);
             try {
                 const posts = await Post.find({ username: user.username }).sort({ ateTime: 1 });
-                return posts.filter(post => new Date(post.ateTime).getMonth()+1 == month);
+                return posts.filter(post => (new Date(post.ateTime).getMonth()+1 == month && new Date(post.ateTime).getFullYear() == year));
 
             } catch (error) {
                 throw new Error(error);
