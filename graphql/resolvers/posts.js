@@ -2,6 +2,7 @@ const { AuthenticationError, UserInputError } = require('apollo-server');
 
 const Post = require('../../models/Post');
 const checkAuth = require('../../utils/checkAuth');
+const { validatePostInput } = require('../../utils/validators');
 
 module.exports = {
     Query: {
@@ -26,7 +27,18 @@ module.exports = {
             } catch (error) {
                 throw new Error(err);
             }
-        }
+        },
+        async getUserMonthPosts(_, { month }, context) {
+            const user = checkAuth(context);
+            try {
+                const posts = await Post.find({ username: user.username });
+                return posts.filter(post => new Date(post.ateTime).getMonth()+1 == month);
+
+            } catch (error) {
+                throw new Error(err);
+            }
+
+        },
     },
     Mutation: {
         async createPost(_, { postInput: {
@@ -42,12 +54,9 @@ module.exports = {
             tags } }, context) {
             const user = checkAuth(context);
 
-            if (image.trim() === '') {
-                throw new Error('You must upload an image.');
-            }
-
-            if (foodName.trim() === '') {
-                throw new Error('Food name field must not be empty.');
+            const { valid, errors } = validatePostInput(foodName, image);
+            if (!valid) {
+                throw new UserInputError('Errors', { errors });
             }
 
             const newPost = new Post({

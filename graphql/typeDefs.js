@@ -58,11 +58,12 @@ module.exports = gql`
         location: String!
         rating: String!
         review: String!
-        tags: [String]!
+        tags: [String]
     }
     type Query {
         getPosts: [Post]
         getPost(postId: ID!): Post
+        getUserMonthPosts(month: String!): [Post]
     }
     type Mutation {
         register(registerInput: RegisterInput): User!

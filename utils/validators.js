@@ -31,3 +31,19 @@ module.exports.validateLoginInput = (username, password) => {
         valid: Object.keys(errors).length < 1
     }
 }
+
+module.exports.validatePostInput = (foodName, image) => {
+    const errors = {};
+    if (foodName.trim() === '') {
+        errors.foodName = 'Food name must not be empty.';
+    }
+    if (image.trim() === '') {
+        errors.image = 'Please upload an image.';
+    }
+
+    return {
+        errors,
+        valid: Object.keys(errors).length < 1
+    };
+
+}
