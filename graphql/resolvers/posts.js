@@ -31,11 +31,11 @@ module.exports = {
         async getUserMonthPosts(_, { month }, context) {
             const user = checkAuth(context);
             try {
-                const posts = await Post.find({ username: user.username });
+                const posts = await Post.find({ username: user.username }).sort({ ateTime: 1 });
                 return posts.filter(post => new Date(post.ateTime).getMonth()+1 == month);
 
             } catch (error) {
-                throw new Error(err);
+                throw new Error(error);
             }
 
         },
