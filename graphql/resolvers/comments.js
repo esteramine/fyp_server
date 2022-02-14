@@ -38,7 +38,7 @@ module.exports = {
 
                 if (post.comments[commentIndex].username === username) {
                     // check whether the person delete the comment is the comment owner
-                    post.comments.splice(commentId, 1);
+                    post.comments.splice(commentIndex, 1);
                     await post.save();
                     return post;
                 }
