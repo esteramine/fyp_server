@@ -20,6 +20,7 @@ module.exports = gql`
         rating: String!
         review: String!
         tags: [String]!
+        public: Boolean!
     }
     type User {
         id: ID!
@@ -59,6 +60,7 @@ module.exports = gql`
         rating: String!
         review: String!
         tags: [String]
+        public: Boolean!
     }
     type Query {
         getPosts: [Post]

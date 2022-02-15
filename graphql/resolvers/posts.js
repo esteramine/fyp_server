@@ -9,7 +9,7 @@ module.exports = {
         async getPosts() {
             try {
                 const posts = await Post.find().sort({ createdAt: -1 });
-                return posts;
+                return posts.filter(post => post.public == true);
 
             } catch (error) {
                 throw new Error(err);
@@ -32,7 +32,7 @@ module.exports = {
             const user = checkAuth(context);
             try {
                 const posts = await Post.find({ username: user.username }).sort({ ateTime: 1 });
-                return posts.filter(post => (new Date(post.ateTime).getMonth()+1 == month && new Date(post.ateTime).getFullYear() == year));
+                return posts.filter(post => (new Date(post.ateTime).getMonth() + 1 == month && new Date(post.ateTime).getFullYear() == year));
 
             } catch (error) {
                 throw new Error(error);
@@ -51,7 +51,9 @@ module.exports = {
             location,
             rating,
             review,
-            tags } }, context) {
+            tags,
+            public
+        } }, context) {
             const user = checkAuth(context);
 
             const { valid, errors } = validatePostInput(foodName, image);
@@ -72,7 +74,8 @@ module.exports = {
                 location,
                 rating,
                 review,
-                tags
+                tags,
+                public
             });
 
             const post = await newPost.save();

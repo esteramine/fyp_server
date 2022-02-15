@@ -17,6 +17,7 @@ const postSchema = new Schema({
     rating: String,
     review: String,
     tags: [String],
+    public: Boolean,
     likes: [
         {
             username: String,
