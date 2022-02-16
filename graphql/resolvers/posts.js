@@ -39,6 +39,15 @@ module.exports = {
             }
 
         },
+        async searchTag(_, { tag }) {
+            try {
+                const posts = await Post.find();
+                return posts.filter(post => post.tags.includes(tag) && post.public == true);
+                
+            } catch (error) {
+                throw new Error(error);
+            }
+        }
     },
     Mutation: {
         async createPost(_, { postInput: {

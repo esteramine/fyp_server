@@ -66,6 +66,7 @@ module.exports = gql`
         getPosts: [Post]
         getPost(postId: ID!): Post
         getUserMonthPosts(year: String!, month: String!): [Post]
+        searchTag(tag: String!): [Post]
     }
     type Mutation {
         register(registerInput: RegisterInput): User!
