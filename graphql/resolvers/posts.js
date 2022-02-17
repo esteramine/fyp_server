@@ -43,7 +43,7 @@ module.exports = {
             try {
                 const posts = await Post.find();
                 return posts.filter(post => post.tags.includes(tag) && post.public == true);
-                
+
             } catch (error) {
                 throw new Error(error);
             }
@@ -106,6 +106,22 @@ module.exports = {
                 }
             } catch (error) {
                 throw new Error(error);
+            }
+        },
+        async editPost(_, { postId, postInput }, context) {
+            const { username } = checkAuth(context);
+        
+            try {
+                const post = await Post.findById(postId);
+                if (username == post.username) {
+                    const editedPost = await Post.findByIdAndUpdate(postId, postInput, {new: true});
+                    return editedPost;
+                }
+                else {
+                    throw new AuthenticationError('Action not allowed.');
+                }
+            } catch (err) {
+                throw new Error(err);
             }
         },
         async likePost(_, { postId }, context) {

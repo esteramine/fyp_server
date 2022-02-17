@@ -73,6 +73,7 @@ module.exports = gql`
         login(loginInput: LoginInput): User!
         createPost(postInput: PostInput): Post!
         deletePost(postId: ID!): String!
+        editPost(postId: ID!, postInput: PostInput): Post!
         createComment(postId: ID!, body: String!): Post!
         deleteComment(postId: ID!, commentId: ID!): Post!
         likePost(postId: ID!): Post!
