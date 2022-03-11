@@ -1,6 +1,7 @@
 const { AuthenticationError, UserInputError } = require('apollo-server');
 
 const Post = require('../../models/Post');
+const User = require('../../models/User');
 const checkAuth = require('../../utils/checkAuth');
 const { validatePostInput } = require('../../utils/validators');
 
@@ -86,6 +87,9 @@ module.exports = {
                 tags,
                 public
             });
+
+            // add progress to the user
+            await User.findByIdAndUpdate(user.id, { $inc: { progress: 1 }});
 
             const post = await newPost.save();
 
