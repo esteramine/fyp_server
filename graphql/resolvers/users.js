@@ -5,6 +5,7 @@ const { UserInputError } = require('apollo-server');
 const { SECRET_KEY } = require('../../config');
 const User = require('../../models/User');
 const { validateRegisterInput, validateLoginInput } = require('../../utils/validators');
+const checkAuth = require('../../utils/checkAuth');
 
 // const generateToken = (user) => {
 //     return jwt.sign({
@@ -83,6 +84,24 @@ module.exports = {
                 id: user._id,
                 token
             };
+        }
+    },
+    Query: {
+        async getUserProgress(_, __, context) {
+            const user = checkAuth(context);
+
+            try {
+                const dbUser = await User.findById(user.id);
+                if (dbUser) {
+                    return dbUser.progress;
+                }
+                else {
+                    throw new Error('User not found.');
+                }
+            } catch (error) {
+                throw new Error(error);
+            }
+
         }
     }
 }
