@@ -114,6 +114,11 @@ module.exports = {
         },
         async editPost(_, { postId, postInput }, context) {
             const { username } = checkAuth(context);
+
+            const { valid, errors } = validatePostInput(postInput.foodName, postInput.image);
+            if (!valid) {
+                throw new UserInputError('Errors', { errors });
+            }
         
             try {
                 const post = await Post.findById(postId);
