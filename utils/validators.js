@@ -3,8 +3,14 @@ module.exports.validateRegisterInput = (username, password, confirmedPassword) =
     if (username.trim() == '') {
         errors.username = 'Username should not be empty!';
     }
+    else if (username.length < 4) {
+        errors.username = 'Username should not be less than 4 characters!';
+    }
     if (password == '') {
         errors.password = 'Password should not be empty!';
+    }
+    else if (password.length < 4) {
+        errors.password = 'Password should not be less than 4 characters!';
     }
     else if (password !== confirmedPassword) {
         errors.confirmedPassword = 'Passwords do not match!';
