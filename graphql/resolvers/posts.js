@@ -33,9 +33,9 @@ module.exports = {
         async getUserMonthPosts(_, { year, month }, context) {
             const user = checkAuth(context);
             try {
-                const posts = await Post.find({ username: user.username }).sort({ ateTime: 1 });
+                const posts = await Post.find({ username: user.username });
+                posts.sort((a, b) => (a.ateTime > b.ateTime) ? 1 : ((b.ateTime > a.ateTime) ? -1 : 0));
                 return posts.filter(post => (new Date(post.ateTime).getMonth() + 1 == month && new Date(post.ateTime).getFullYear() == year));
-
             } catch (error) {
                 throw new Error(error);
             }
