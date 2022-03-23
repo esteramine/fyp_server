@@ -9,11 +9,12 @@ module.exports = {
     Query: {
         async getPosts() {
             try {
-                const posts = await Post.find().sort({ createdAt: -1 });
+                const posts = await Post.find();
+                posts.sort((b,a) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
                 return posts.filter(post => post.public == true);
 
             } catch (error) {
-                throw new Error(err);
+                throw new Error(error);
             }
         },
         async getPost(_, { postId }) {
