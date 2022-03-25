@@ -64,6 +64,19 @@ module.exports = gql`
         tags: [String]
         public: Boolean!
     }
+    input EditPostInput {
+        image: String!
+        foodName: String!
+        completion: String!
+        ateTime: String!
+        price: String!
+        restaurantName: String!
+        location: String!
+        rating: String!
+        review: String!
+        tags: [String]
+        public: Boolean!
+    }
     type Query {
         getPosts: [Post]
         getPost(postId: ID!): Post
@@ -76,7 +89,7 @@ module.exports = gql`
         login(loginInput: LoginInput): User!
         createPost(postInput: PostInput): Post!
         deletePost(postId: ID!): String!
-        editPost(postId: ID!, postInput: PostInput): Post!
+        editPost(postId: ID!, postInput: EditPostInput): Post!
         createComment(postId: ID!, body: String!): Post!
         deleteComment(postId: ID!, commentId: ID!): Post!
         likePost(postId: ID!): Post!
