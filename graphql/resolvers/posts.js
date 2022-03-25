@@ -9,7 +9,7 @@ module.exports = {
     Query: {
         async getPosts() {
             try {
-                const posts = await Post.find().maxTimeMS(1000*1000*1000);
+                const posts = await Post.find();
                 posts.sort((b,a) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
                 return posts.filter(post => post.public == true);
                 // return posts;
