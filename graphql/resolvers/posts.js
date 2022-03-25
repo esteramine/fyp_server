@@ -9,7 +9,7 @@ module.exports = {
     Query: {
         async getPosts() {
             try {
-                const posts = await Post.find();
+                const posts = await Post.find().maxTimeMS(1000*1000*1000);
                 posts.sort((b,a) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
                 return posts.filter(post => post.public == true);
                 // return posts;
@@ -28,7 +28,7 @@ module.exports = {
                     throw new Error('Post not found.');
                 }
             } catch (error) {
-                throw new Error(err);
+                throw new Error(error);
             }
         },
         async getUserMonthPosts(_, { year, month }, context) {
