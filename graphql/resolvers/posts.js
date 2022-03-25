@@ -1,4 +1,7 @@
-const { AuthenticationError, UserInputError } = require('apollo-server');
+const { AuthenticationError, UserInputError } = require('apollo-server-express');
+const { extname } = require('path');
+const { v4: uuid } = require('uuid');
+const s3 = require('../../s3');
 
 const Post = require('../../models/Post');
 const User = require('../../models/User');

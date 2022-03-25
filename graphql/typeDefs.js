@@ -1,6 +1,7 @@
-const gql = require('graphql-tag');
+const { gql } = require('apollo-server-express');
 
 module.exports = gql`
+    scalar Upload
     type Post {
         id: ID!
         image: String!
@@ -50,7 +51,7 @@ module.exports = gql`
         password: String!
     }
     input PostInput {
-        image: String!
+        image: Upload!
         foodName: String!
         # below are not required
         completion: String!
