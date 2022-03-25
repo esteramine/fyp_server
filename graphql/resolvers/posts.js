@@ -71,13 +71,22 @@ module.exports = {
         } }, context) {
             const user = checkAuth(context);
 
-            const { valid, errors } = validatePostInput(foodName, image);
+            const { valid, errors } = validatePostInput(foodName, "image dummy string");
             if (!valid) {
                 throw new UserInputError('Errors', { errors });
             }
 
+            const { createReadStream, filename, mimetype } = await image;
+            const fileKey = `${uuid()}${extname(filename)}`;
+
+            const { Location } = await s3.upload({
+                Body: createReadStream(),
+                Key: fileKey,
+                ContentType: mimetype
+            }).promise();
+
             const newPost = new Post({
-                image,
+                image: fileKey,
                 foodName,
                 user: user.id,
                 username: user.username,
