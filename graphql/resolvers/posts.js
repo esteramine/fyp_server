@@ -1,4 +1,7 @@
-const { AuthenticationError, UserInputError } = require('apollo-server');
+const { AuthenticationError, UserInputError } = require('apollo-server-express');
+const { extname } = require('path');
+const { v4: uuid } = require('uuid');
+const s3 = require('../../s3');
 
 const Post = require('../../models/Post');
 const User = require('../../models/User');
@@ -10,7 +13,7 @@ module.exports = {
         async getPosts() {
             try {
                 const posts = await Post.find();
-                posts.sort((b,a) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
+                posts.sort((b, a) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
                 return posts.filter(post => post.public == true);
                 // return posts;
 
@@ -68,13 +71,22 @@ module.exports = {
         } }, context) {
             const user = checkAuth(context);
 
-            const { valid, errors } = validatePostInput(foodName, image);
+            const { valid, errors } = validatePostInput(foodName, "image dummy string");
             if (!valid) {
                 throw new UserInputError('Errors', { errors });
             }
 
+            const { createReadStream, filename, mimetype } = await image;
+            const fileKey = `${uuid()}${extname(filename)}`;
+
+            const { Location } = await s3.upload({
+                Body: createReadStream(),
+                Key: fileKey,
+                ContentType: mimetype
+            }).promise();
+
             const newPost = new Post({
-                image,
+                image: fileKey,
                 foodName,
                 user: user.id,
                 username: user.username,
@@ -91,7 +103,7 @@ module.exports = {
             });
 
             // add progress to the user
-            await User.findByIdAndUpdate(user.id, { $inc: { progress: 1 }});
+            await User.findByIdAndUpdate(user.id, { $inc: { progress: 1 } });
 
             const post = await newPost.save();
 
@@ -105,6 +117,8 @@ module.exports = {
                 if (user.username == post.username) {
                     // check whether the person who delete the post is the post owner
                     await post.delete();
+                    // decrease progress to the user
+                    await User.findByIdAndUpdate(user.id, { $inc: { progress: -1 } });
                     return 'Post deleted successfully.';
                 }
                 else {
@@ -121,11 +135,11 @@ module.exports = {
             if (!valid) {
                 throw new UserInputError('Errors', { errors });
             }
-        
+
             try {
                 const post = await Post.findById(postId);
                 if (username == post.username) {
-                    const editedPost = await Post.findByIdAndUpdate(postId, postInput, {new: true});
+                    const editedPost = await Post.findByIdAndUpdate(postId, postInput, { new: true });
                     return editedPost;
                 }
                 else {

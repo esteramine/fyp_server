@@ -1,6 +1,7 @@
-const gql = require('graphql-tag');
+const { gql } = require('apollo-server-express');
 
 module.exports = gql`
+    scalar Upload
     type Post {
         id: ID!
         image: String!
@@ -50,9 +51,22 @@ module.exports = gql`
         password: String!
     }
     input PostInput {
-        image: String!
+        image: Upload!
         foodName: String!
         # below are not required
+        completion: String!
+        ateTime: String!
+        price: String!
+        restaurantName: String!
+        location: String!
+        rating: String!
+        review: String!
+        tags: [String]
+        public: Boolean!
+    }
+    input EditPostInput {
+        image: String!
+        foodName: String!
         completion: String!
         ateTime: String!
         price: String!
@@ -75,7 +89,7 @@ module.exports = gql`
         login(loginInput: LoginInput): User!
         createPost(postInput: PostInput): Post!
         deletePost(postId: ID!): String!
-        editPost(postId: ID!, postInput: PostInput): Post!
+        editPost(postId: ID!, postInput: EditPostInput): Post!
         createComment(postId: ID!, body: String!): Post!
         deleteComment(postId: ID!, commentId: ID!): Post!
         likePost(postId: ID!): Post!
