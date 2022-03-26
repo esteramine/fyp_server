@@ -13,7 +13,7 @@ module.exports = {
         async getPosts() {
             try {
                 const posts = await Post.find();
-                posts.sort((b,a) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
+                posts.sort((b, a) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
                 return posts.filter(post => post.public == true);
                 // return posts;
 
@@ -103,7 +103,7 @@ module.exports = {
             });
 
             // add progress to the user
-            await User.findByIdAndUpdate(user.id, { $inc: { progress: 1 }});
+            await User.findByIdAndUpdate(user.id, { $inc: { progress: 1 } });
 
             const post = await newPost.save();
 
@@ -117,6 +117,8 @@ module.exports = {
                 if (user.username == post.username) {
                     // check whether the person who delete the post is the post owner
                     await post.delete();
+                    // decrease progress to the user
+                    await User.findByIdAndUpdate(user.id, { $inc: { progress: -1 } });
                     return 'Post deleted successfully.';
                 }
                 else {
@@ -133,11 +135,11 @@ module.exports = {
             if (!valid) {
                 throw new UserInputError('Errors', { errors });
             }
-        
+
             try {
                 const post = await Post.findById(postId);
                 if (username == post.username) {
-                    const editedPost = await Post.findByIdAndUpdate(postId, postInput, {new: true});
+                    const editedPost = await Post.findByIdAndUpdate(postId, postInput, { new: true });
                     return editedPost;
                 }
                 else {
