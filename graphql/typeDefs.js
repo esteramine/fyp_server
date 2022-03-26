@@ -51,7 +51,7 @@ module.exports = gql`
         password: String!
     }
     input PostInput {
-        image: Upload!
+        image: String!
         foodName: String!
         # below are not required
         completion: String!

@@ -8,12 +8,32 @@ const User = require('../../models/User');
 const checkAuth = require('../../utils/checkAuth');
 const { validatePostInput } = require('../../utils/validators');
 
+const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: contentType });
+    return blob;
+}
+
 module.exports = {
     Query: {
         async getPosts() {
             try {
                 const posts = await Post.find();
-                posts.sort((b,a) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
+                posts.sort((b, a) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
                 return posts.filter(post => post.public == true);
                 // return posts;
 
@@ -76,14 +96,30 @@ module.exports = {
                 throw new UserInputError('Errors', { errors });
             }
 
-            const { createReadStream, filename, mimetype } = await image;
-            const fileKey = `${uuid()}${extname(filename)}`;
+            // const { createReadStream, filename, mimetype } = await image;
+            // const fileKey = `${uuid()}${extname(filename)}`;
 
-            const { Location } = await s3.upload({
-                Body: createReadStream(),
-                Key: fileKey,
-                ContentType: mimetype
-            }).promise();
+            const fileKey = `${uuid()}.png`;
+            let contentDeposition = 'inline;filename="' + fileKey + '"';
+            const arrayBuffer = decode(image);
+
+            const blob = b64toBlob(image, 'image/png');
+            const { Location } = await s3.upload(new File([blob], fileKey)).promise();
+
+
+            // const params = {
+            //     Key: fileKey,
+            //     Body: arrayBuffer,
+            //     ContentDeposition: contentDeposition,
+            //     ContentType: 'image/png'
+            // }
+
+
+            // const { Location } = await s3.upload({
+            //     Body: createReadStream(),
+            //     Key: fileKey,
+            //     ContentType: mimetype
+            // }).promise();
 
             const newPost = new Post({
                 image: fileKey,
@@ -103,7 +139,7 @@ module.exports = {
             });
 
             // add progress to the user
-            await User.findByIdAndUpdate(user.id, { $inc: { progress: 1 }});
+            await User.findByIdAndUpdate(user.id, { $inc: { progress: 1 } });
 
             const post = await newPost.save();
 
@@ -133,11 +169,11 @@ module.exports = {
             if (!valid) {
                 throw new UserInputError('Errors', { errors });
             }
-        
+
             try {
                 const post = await Post.findById(postId);
                 if (username == post.username) {
-                    const editedPost = await Post.findByIdAndUpdate(postId, postInput, {new: true});
+                    const editedPost = await Post.findByIdAndUpdate(postId, postInput, { new: true });
                     return editedPost;
                 }
                 else {
