@@ -25,6 +25,7 @@ module.exports = {
     Mutation: {
         async register(_, { registerInput: { username, password, confirmedPassword } }) {
             // Validate user data
+            username = username.trim();
             const { valid, errors } = validateRegisterInput(username, password, confirmedPassword);
             if (!valid) {
                 throw new UserInputError('Errors', { errors });
@@ -59,6 +60,7 @@ module.exports = {
             }
         },
         async login(_, { loginInput: {username, password} }) {
+            username = username.trim();
             const { valid, errors } = validateLoginInput(username, password);
             if (!valid) {
                 throw new UserInputError('Errors', { errors });
